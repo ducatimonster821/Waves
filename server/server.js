@@ -17,7 +17,7 @@ app.use(cookieParser());
 const {User} = require('./models/user');
 
 // Middleware ------------------------------------
-const { auth } = require('./middleware/auth');
+const {auth} = require('./middleware/auth');
 
 // USERS ------------------------------------
 
@@ -39,55 +39,47 @@ app.get('/api/users/auth', auth, (req, res) => {
 app.post('/api/users/register', (req, res) => {
     const user = new User(req.body);
 
-    console.log(user);
-
     user.save((err, doc) => {
-        if (err) return res.json({
-            success: false,
-            err
-        });
-
+        if (err) return res.json({success, err});
         res.status(200).json({
-            success: true,
-            userdata: doc.name
+            success: true
+            // userdata: doc.name
         });
     });
 });
 
 app.post('/api/users/login', (req, res) => {
     User.findOne({email: req.body.email}, (err, user) => {
-        // console.log(user);
-
-        if (!user) {
+        if (!user)
             return res.json({
                 loginSuccess: false,
                 message: 'Auth failed, email not found'
-            })
-        }
+            });
 
         user.comparePassword(req.body.password, (err, isMatch) => {
-            console.log('isMatch:', isMatch);
-
-            if (!isMatch) {
-                return res.json({
-                    loginSuccess: false,
-                    message: 'Wrong password'
-                });
-            }
-
+            if (!isMatch)
+                return res.json({loginSuccess: false, message: 'Wrong password'});
 
             user.generateToken((err, user) => {
-                if (err) {
-                    return res.status(400).send(err);
-                }
-
+                if (err) return res.status(400).send(err);
                 res
                     .cookie('w_auth', user.token)
                     .status(200)
                     .json({
                         loginSuccess: true
                     });
-            })
+            });
+        });
+    });
+});
+
+app.get('/api/user/logout', auth, (req, res) => {
+    // console.log(req.user);
+
+    User.findOneAndUpdate({_id: req.user._id}, {token: ''}, (err, doc) => {
+        if (err) return res.json({success: false, err});
+        return res.status(200).send({
+            success: true
         });
     });
 });
