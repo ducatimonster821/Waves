@@ -9,12 +9,12 @@ require('dotenv').config();
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.DATABASE);
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Models ------------------------------------
-const { User } = require('./models/user');
+const {User} = require('./models/user');
 
 // USERS ------------------------------------
 app.post('/api/users/register', (req, res) => {
@@ -31,6 +31,44 @@ app.post('/api/users/register', (req, res) => {
         res.status(200).json({
             success: true,
             userdata: doc.name
+        });
+    });
+});
+
+app.post('/api/users/login', (req, res) => {
+    User.findOne({email: req.body.email}, (err, user) => {
+        // console.log(user);
+
+        if (!user) {
+            return res.json({
+                loginSuccess: false,
+                message: 'Auth failed, email not found'
+            })
+        }
+
+        user.comparePassword(req.body.password, (err, isMatch) => {
+            console.log('isMatch:', isMatch);
+
+            if (!isMatch) {
+                return res.json({
+                    loginSuccess: false,
+                    message: 'Wrong password'
+                });
+            }
+
+
+            user.generateToken((err, user) => {
+                if (err) {
+                    return res.status(400).send(err);
+                }
+
+                res
+                    .cookie('w_auth', user.token)
+                    .status(200)
+                    .json({
+                        loginSuccess: true
+                    });
+            })
         });
     });
 });
