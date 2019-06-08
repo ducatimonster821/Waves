@@ -1,8 +1,10 @@
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
 const app = express();
+app.use(cors());
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -22,6 +24,16 @@ const {Product} = require('./models/product');
 // Middleware ------------------------------------
 const {auth} = require('./middleware/auth');
 const {admin} = require('./middleware/admin');
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+        'Access-Control-Allow-Methods',
+        'OPTIONS, GET, POST, PUT, PATCH, DELETE'
+    );
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
 
 // --------------------------------------------
 // PRODUCTS
@@ -145,6 +157,8 @@ app.post('/api/product/brand', auth, admin, (req, res) => {
 });
 
 app.get('/api/product/brands', (req, res) => {
+    console.log('/api/product/brands');
+
     Brand.find({}, (err, brands) => {
         if (err) {
             return res.status(400).send(err);
