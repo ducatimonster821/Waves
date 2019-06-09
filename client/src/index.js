@@ -12,6 +12,7 @@ import './Resources/css/styles.css';
 // import App from './App';
 // import * as serviceWorker from './serviceWorker';
 
+// const createStoreWithMiddleware = applyMiddleware(promiseMiddleware, ReduxThunk)(createStore);
 const createStoreWithMiddleware = applyMiddleware(promiseMiddleware, ReduxThunk)(createStore);
 
 ReactDOM.render(

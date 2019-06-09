@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {Component} from 'react';
 import FormField from '../utils/Form/formfield';
 import {update, generateData, isFormValid} from '../utils/Form/formActions';
+import {withRouter} from 'react-router-dom';
 
 import {connect} from 'react-redux';
+import {loginUser} from '../../actions/user_actions';
 
-class Login extends React.Component {
+class Login extends Component {
     state = {
         formError: false,
         formSuccess: '',
@@ -43,15 +45,14 @@ class Login extends React.Component {
         }
     };
 
-    updateForm = (element) => {
+    udateForm = (element) => {
         const newFormdata = update(element, this.state.formdata, 'login');
-        console.log('newFormdata:', newFormdata);
 
         this.setState({
             formError: false,
             formdata: newFormdata
-        })
-    };
+        });
+    }
 
     submitForm = (event) => {
         event.preventDefault();
@@ -60,15 +61,23 @@ class Login extends React.Component {
         let formIsValid = isFormValid(this.state.formdata, 'login')
 
         if (formIsValid) {
-            // console.log(dataSubmit);
+            this.props.dispatch(loginUser(dataSubmit)).then(response => {
+                if (response.payload.loginSuccess) {
+                    console.log(response.payload);
+                    this.props.history.push('/user/dashboard');
+                } else {
+                    this.setState({
+                        formError: true
+                    });
+                }
+            });
         } else {
             this.setState({
                 formError: true
             })
         }
 
-        console.log('dataSubmit:', dataSubmit);
-    };
+    }
 
     render() {
         return (
@@ -77,13 +86,13 @@ class Login extends React.Component {
                     <FormField
                         id={'email'}
                         formdata={this.state.formdata.email}
-                        change={element => this.updateForm(element)}
+                        change={element => this.udateForm(element)}
                     />
 
                     <FormField
                         id={'password'}
                         formdata={this.state.formdata.password}
-                        change={element => this.updateForm(element)}
+                        change={element => this.udateForm(element)}
                     />
 
                     {this.state.formError ?
@@ -91,14 +100,14 @@ class Login extends React.Component {
                             Please check your data
                         </div>
                         : null}
-
                     <button onClick={(event) => this.submitForm(event)}>
                         Log in
                     </button>
+
                 </form>
             </div>
         );
     }
 }
 
-export default connect()(Login);
+export default connect()(withRouter(Login));
