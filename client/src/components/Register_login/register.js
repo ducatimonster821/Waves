@@ -1,13 +1,14 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {loginUser} from '../../actions/user_actions';
+// import Dialog from '@material-ui/core/Dialog';
+import {registerUser} from '../../actions/user_actions';
 import FormField from '../utils/Form/formfield';
 import {update, generateData, isFormValid} from '../utils/Form/formActions';
 
-class Register extends React.Component {
+class Register extends Component {
     state = {
         formError: false,
-        formSuccess: '',
+        formSuccess: false,
         formdata: {
             name: {
                 element: 'input',
@@ -90,7 +91,6 @@ class Register extends React.Component {
 
     updateForm = (element) => {
         const newFormdata = update(element, this.state.formdata, 'register');
-
         this.setState({
             formError: false,
             formdata: newFormdata
@@ -101,12 +101,29 @@ class Register extends React.Component {
         event.preventDefault();
 
         let dataToSubmit = generateData(this.state.formdata, 'register');
-        let formIsValid = isFormValid(this.state.formdata, 'register')
+        let formIsValid = isFormValid(this.state.formdata, 'register');
 
-        console.log('dataToSubmit:', dataToSubmit);
-        
         if (formIsValid) {
-            console.log('dataToSubmit:', dataToSubmit);
+            // console.log(dataToSubmit);
+            this.props.dispatch(registerUser(dataToSubmit))
+                .then(response => {
+                    console.log(response);
+                    if (response.payload.success) {
+                        this.setState({
+                            formError: false,
+                            formSuccess: true
+                        });
+                        setTimeout(() => {
+                            this.props.history.push('/register_login');
+                        }, 3000)
+                    } else {
+                        this.setState({formError: true})
+                    }
+                }).catch(e => {
+                    this.setState({
+                        formError: true
+                    })
+                })
         } else {
             this.setState({
                 formError: true
@@ -176,6 +193,16 @@ class Register extends React.Component {
                         </div>
                     </div>
                 </div>
+
+                {/* <Dialog open={this.state.formSuccess}>
+                    <div className="dialog_alert">
+                        <div>Congratulations !!</div>
+                        <div>
+                            You will be redirected to the LOGIN in a couple seconds...
+                        </div>
+                    </div>
+                </Dialog> */}
+
             </div>
         );
     }
