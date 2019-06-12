@@ -1,12 +1,11 @@
-import React, {Component} from 'react';
+import React from 'react';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
+import {loginUser} from '../../actions/user_actions';
 import FormField from '../utils/Form/formfield';
 import {update, generateData, isFormValid} from '../utils/Form/formActions';
-import {withRouter} from 'react-router-dom';
 
-import {connect} from 'react-redux';
-import {loginUser} from '../../actions/user_actions';
-
-class Login extends Component {
+class Login extends React.Component {
     state = {
         formError: false,
         formSuccess: '',
