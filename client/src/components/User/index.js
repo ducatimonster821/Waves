@@ -1,17 +1,23 @@
 import React from 'react';
+import isEmpty from 'lodash/isEmpty';
 import UserLayout from '../../hoc/user';
 import MyButon from '../utils/button';
 
-const UserDashboard = () => {
+const UserDashboard = ({user}) => {
+    console.log('UserDashboard user:', user);
+    console.log('render');
+
+    if (isEmpty(user)) return false;
+
     return (
         <UserLayout>
             <div>
                 <div className="user_nfo_panel">
                     <h1>User information</h1>
                     <div>
-                        <span>name</span>
-                        <span>lastname</span>
-                        <span>email</span>
+                        <span>{user.userData.name}</span>
+                        <span>{user.userData.lastname}</span>
+                        <span>{user.userData.email}</span>
                     </div>
                     <MyButon
                         type="default"

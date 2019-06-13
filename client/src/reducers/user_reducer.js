@@ -6,6 +6,7 @@ import {
 
 export default function (state = {}, action) {
     switch (action.type) {
+
         case REGISTER_USER:
             console.log('REGISTER_USER:', action.payload);
 

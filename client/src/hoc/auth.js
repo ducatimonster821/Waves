@@ -11,6 +11,8 @@ export default function (ComposedClass, reload, adminRoute = null) {
         }
 
         componentDidMount() {
+            console.log('componentDidMount');
+
             this.props.dispatch(auth()).then(response => {
                 console.log('props:', this.props);
 
@@ -19,13 +21,15 @@ export default function (ComposedClass, reload, adminRoute = null) {
 
                 if (!user.isAuth) {
                     if (reload) {
-                        this.props.history.push('/register_login');
+                        this.props.history.push('/register_login')
                     }
                 } else {
                     if (adminRoute && !user.isAdmin) {
-                        this.props.history.push('/user/dashboard');
+                        this.props.history.push('/user/dashboard')
                     } else {
-                        this.props.history.push('/user/dashboard');
+                        if (reload === false) {
+                            this.props.history.push('/user/dashboard')
+                        }
                     }
                 }
 
@@ -49,6 +53,8 @@ export default function (ComposedClass, reload, adminRoute = null) {
     }
 
     function mapStateToProps(state) {
+        console.log('state:', state);
+
         return {
             user: state.user
         }
