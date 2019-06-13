@@ -1,7 +1,8 @@
 import {
     LOGIN_USER,
     REGISTER_USER,
-    AUTH_USER
+    AUTH_USER,
+    LOGOUT_USER
 } from '../actions/types';
 
 export default function (state = {}, action) {
@@ -30,6 +31,11 @@ export default function (state = {}, action) {
                 ...state,
                 userData: action.payload
             }
+
+        case LOGOUT_USER:
+            console.log('LOGOUT_USER', action.payload);
+
+            return {...state}
 
         default:
             return state;

@@ -239,7 +239,7 @@ app.post('/api/users/login', (req, res) => {
     });
 });
 
-app.get('/api/user/logout', auth, (req, res) => {
+app.get('/api/users/logout', auth, (req, res) => {
     // console.log(req.user);
 
     User.findOneAndUpdate({_id: req.user._id}, {token: ''}, (err, doc) => {
