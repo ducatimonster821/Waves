@@ -11,11 +11,7 @@ export default function (ComposedClass, reload, adminRoute = null) {
         }
 
         componentDidMount() {
-            console.log('componentDidMount');
-
             this.props.dispatch(auth()).then(response => {
-                console.log('props:', this.props);
-
                 let user = this.props.user.userData;
                 // console.log(user);
 
@@ -53,8 +49,6 @@ export default function (ComposedClass, reload, adminRoute = null) {
     }
 
     function mapStateToProps(state) {
-        console.log('state:', state);
-
         return {
             user: state.user
         }
