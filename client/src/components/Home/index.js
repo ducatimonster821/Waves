@@ -14,9 +14,10 @@ class Home extends React.Component {
     }
 
     render() {
-        if (isEmpty(this.props.products.bySell && this.props.products.bySell)) return false;
+        const {products} = this.props;
+        const {bySell, byArrival} = products;
 
-        console.log(this.props.products);
+        if (isEmpty(bySell) && isEmpty(byArrival)) return false;
 
         return (
             <div>
