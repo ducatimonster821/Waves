@@ -2,8 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getBrands, getWoods } from '../../actions/products_actions';
 import CollapseCheckbox from '../utils/collapseCheckbox';
+import CollapseRadio from '../utils/collapseRatio';
 import PageTop from '../utils/page_top';
-import { frets } from '../utils/Form/fixed_categories';
+import { frets, price } from '../utils/Form/fixed_categories';
 
 class Shop extends React.Component {
 
@@ -24,12 +25,34 @@ class Shop extends React.Component {
         this.props.dispatch(getWoods());
     }
 
+    handlePrice = (value) => {
+        console.log('value,', value);
+
+        const data = price;
+        let array = [];
+
+        for (let key in data) {
+            if (data[key]._id === parseInt(value, 10)) {
+                array = data[key].array
+            }
+        }
+
+        console.log('array', array);
+
+        return array;
+    }
+
     handleFilters = (filters, category) => {
         // console.log(filters, category);
 
         const newFilters = {...this.state.filters}
 
         newFilters[category] = filters;
+
+        if (category === 'price') {
+            let priceValues = this.handlePrice(filters);
+            newFilters[category] = priceValues;
+        }
 
         this.setState({
             filters: newFilters
@@ -66,6 +89,12 @@ class Shop extends React.Component {
                                 title="Wood"
                                 list={products.woods}
                                 handleFilters={(filters) => this.handleFilters(filters, 'wood')}
+                            />
+                            <CollapseRadio
+                                initState={true}
+                                title="Price"
+                                list={price}
+                                handleFilters={(filters) => this.handleFilters(filters, 'price')}
                             />
                         </div>
                         <div className="right">
