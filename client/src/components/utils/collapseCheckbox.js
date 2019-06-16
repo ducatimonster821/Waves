@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import faAngleDown from '@fortawesome/fontawesome-free-solid/faAngleDown';
 import faAngleUp from '@fortawesome/fontawesome-free-solid/faAngleUp';
+
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -41,18 +42,48 @@ class CollapseCheckbox extends Component {
             />
     )
 
-    renderList = () => (
-        this.props.list ?
+    renderList = () => {
+        return this.props.list ?
             this.props.list.map((value) => (
-                <div>
-                    ListItem
-                </div>
+                <ListItem
+                    key={value._id}
+                    style={{padding: '10px 0'}}
+                >
+                    <ListItemText primary={value.name}/>
+                    <ListItemSecondaryAction>
+                        <Checkbox
+                            color="primary"
+                            onChange={this.handleToggle(value._id)}
+                            checked={this.state.checked.indexOf(value._id) !== -1}
+                        />
+                    </ListItemSecondaryAction>
+                </ListItem>
             ))
             : null
-    )
+    }
+
+    handleToggle = value => () => {
+        const {checked} = this.state;
+
+        const currentIndex = checked.indexOf(value);
+        const newChecked = [...checked];
+
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
+
+        this.setState({
+            checked: newChecked
+        }, () => {
+            this.props.handleFilters(newChecked);
+        });
+    }
 
     render() {
-        console.log(this.props);
+        // console.log(this.state.checked);
+
         return (
             <div className="collapse_items_wrapper">
                 <List style={{borderBottom: '1px solid #dbdbdb'}}>

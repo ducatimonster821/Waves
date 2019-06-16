@@ -1,18 +1,41 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { getBrands, getWoods } from '../../actions/products_actions';
-import PageTop from '../utils/page_top';
 import CollapseCheckbox from '../utils/collapseCheckbox';
+import PageTop from '../utils/page_top';
+import { frets } from '../utils/Form/fixed_categories';
 
-class Shop extends Component {
+class Shop extends React.Component {
+
+    state = {
+        grid: '',
+        limit: 6,
+        skip: 0,
+        filters: {
+            brand: [],
+            frets: [],
+            wood: [],
+            price: []
+        }
+    };
 
     componentDidMount() {
         this.props.dispatch(getBrands());
         this.props.dispatch(getWoods());
     }
 
-    handleFilters = () => {
+    handleFilters = (filters, category) => {
+        // console.log(filters, category);
 
+        const newFilters = {...this.state.filters}
+
+        newFilters[category] = filters;
+
+        this.setState({
+            filters: newFilters
+        })
+
+        console.log('newFilters', newFilters);
     }
 
     render() {
@@ -32,6 +55,18 @@ class Shop extends Component {
                                 list={products.brands}
                                 handleFilters={(filters) => this.handleFilters(filters, 'brand')}
                             />
+                            <CollapseCheckbox
+                                initState={false}
+                                title="Frets"
+                                list={frets}
+                                handleFilters={(filters) => this.handleFilters(filters, 'frets')}
+                            />
+                            <CollapseCheckbox
+                                initState={true}
+                                title="Wood"
+                                list={products.woods}
+                                handleFilters={(filters) => this.handleFilters(filters, 'wood')}
+                            />
                         </div>
                         <div className="right">
                             right
@@ -44,8 +79,6 @@ class Shop extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state);
-
     return {
         products: state.products
     }
