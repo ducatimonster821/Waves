@@ -39,6 +39,51 @@ app.use((req, res, next) => {
 // PRODUCTS
 // --------------------------------------------
 
+app.post('/api/product/shop', (req, res) => {
+    console.log('/api/product/shop');
+
+    console.log(req.body);
+
+    let order = req.body.order ? req.body.order : "desc";
+    let sortBy = req.body.sortBy ? req.body.sortBy : "_id";
+    let limit = req.body.limit ? parseInt(req.body.limit) : 100;
+    let skip = parseInt(req.body.skip);
+    let findArgs = {};
+
+    for (let key in req.body.filters) {
+        if (req.body.filters[key].length > 0) {
+            if (key === 'price') {
+                console.log(req.body.filters[key][0]);
+                console.log(req.body.filters[key][1]);
+
+                findArgs[key] = {
+                    $gte: req.body.filters[key][0],
+                    $lte: req.body.filters[key][1]
+                }
+            } else {
+                findArgs[key] = req.body.filters[key]
+            }
+        }
+    }
+
+    findArgs['publish'] = true;
+
+    Product
+        .find(findArgs)
+        .populate('brand')
+        .populate('wood')
+        .sort([[sortBy, order]])
+        .skip(skip).limit(limit)
+        .exec((err, articles) => {
+            if (err) return res.status(400).send(err);
+
+            res.status(200).json({
+                size: articles.length,
+                articles
+            })
+        })
+});
+
 // BY ARRIVAL
 // /articles?sortBy=createdAt&order=desc&limit=4
 
@@ -51,9 +96,9 @@ app.get('/api/product/articles', (req, res) => {
 
     let limit = req.query.limit ? parseInt(req.query.limit) : 100;
 
-    console.log('order:', order); // desc
-    console.log('sortBy:', sortBy); // createdAt
-    console.log('limit:', limit); // 4
+    // console.log('order:', order); // desc
+    // console.log('sortBy:', sortBy); // createdAt
+    // console.log('limit:', limit); // 4
 
     Product.find()
         .populate('brand')
@@ -157,7 +202,7 @@ app.post('/api/product/brand', auth, admin, (req, res) => {
 });
 
 app.get('/api/product/brands', (req, res) => {
-    console.log('/api/product/brands');
+    // console.log('/api/product/brands');
 
     Brand.find({}, (err, brands) => {
         if (err) {
@@ -203,7 +248,7 @@ app.post('/api/users/register', (req, res) => {
 });
 
 app.post('/api/users/login', (req, res) => {
-    console.log('/api/users/login');
+    // console.log('/api/users/login');
 
     User.findOne({email: req.body.email}, (err, user) => {
         if (!user)
